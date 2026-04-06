@@ -173,7 +173,6 @@ nav {
 
 /* MOBILE DRAWER */
 .mobile-drawer {
-  display: none;
   position: fixed;
   top: 61px;
   left: 0;
@@ -188,11 +187,14 @@ nav {
   gap: 4px;
   transform: translateY(-8px);
   opacity: 0;
+  pointer-events: none;
+  display: flex;
   transition: all 0.25s ease;
 }
 .mobile-drawer.open {
   opacity: 1;
   transform: translateY(0);
+  pointer-events: all;
 }
 .mobile-drawer a {
   font-family: var(--font-mono);
@@ -1028,13 +1030,13 @@ footer {
 
 /* SCROLL REVEAL */
 .reveal {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.reveal.visible {
   opacity: 1;
   transform: translateY(0);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(32px);
 }
 
 /* MOBILE */
@@ -1046,7 +1048,6 @@ footer {
   .nav-links { display: none; }
   .nav-desktop-btns { display: none; }
   .menu-btn { display: flex; }
-  .mobile-drawer { display: flex; }
 
   /* HERO */
   .hero { padding: 100px 20px 60px; min-height: auto; }
@@ -1160,11 +1161,7 @@ footer {
   <!-- MOBILE DRAWER -->
 
   <div class="mobile-drawer" id="mobileDrawer">
-    <a href="#services" class="drawer-link">Services</a>
-    <a href="#process" class="drawer-link">Process</a>
-    <a href="#pricing" class="drawer-link">Pricing</a>
-    <a href="#industries" class="drawer-link">Industries</a>
-    <a href="#cta" class="drawer-link" style="color:var(--accent);margin-top:8px;">Start Now →</a>
+    <a href="#cta" class="drawer-link" style="color:var(--accent);">Start Now →</a>
   </div>
 
   <!-- HERO -->
@@ -1476,13 +1473,13 @@ footer {
   <!-- LIVE LEAD COUNTER -->
 
   <div class="live-section">
-    <div class="live-card reveal">
+    <div class="live-card">
       <div>
         <div class="live-indicator">
           <div class="live-dot"></div>
           Live system — right now
         </div>
-        <div class="live-num" id="leadCount">0</div>
+        <div class="live-num" id="leadCount">1,247</div>
         <div class="live-label">Leads captured for clients this month</div>
         <p style="font-size:14px;color:var(--text-dim);margin-top:20px;line-height:1.6;">Every number above is a real person who found a VekSite client, got an instant AI response, and entered a sales pipeline. Most of these happened outside business hours.</p>
       </div>
@@ -1739,20 +1736,27 @@ document.querySelectorAll('a, button, .service-card, .pricing-card, .step-item, 
   el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
 });
 
-// SCROLL REVEAL
+// SCROLL REVEAL — init hidden via JS so content shows if JS fails
 const reveals = document.querySelectorAll('.reveal');
+reveals.forEach(el => el.classList.add('reveal-hidden'));
+
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry, i) => {
     if (entry.isIntersecting) {
-      setTimeout(() => entry.target.classList.add('visible'), i * 60);
+      setTimeout(() => {
+        entry.target.classList.remove('reveal-hidden');
+      }, i * 60);
       observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+}, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
 reveals.forEach(el => observer.observe(el));
 
-// LEAD COUNTER ANIMATION
-function animateCounter(el, target, duration) {
+// LIVE COUNTER — animates in then ticks up randomly
+const counterEl = document.getElementById('leadCount');
+let count = 1247;
+
+function animateCounterIn(el, target, duration) {
   let start = 0;
   const step = target / (duration / 16);
   function update() {
@@ -1763,14 +1767,16 @@ function animateCounter(el, target, duration) {
   update();
 }
 
-const counterEl = document.getElementById('leadCount');
-const counterObserver = new IntersectionObserver((entries) => {
-  if (entries[0].isIntersecting) {
-    animateCounter(counterEl, 1247, 2000);
-    counterObserver.disconnect();
-  }
-}, { threshold: 0.5 });
-counterObserver.observe(counterEl);
+// Animate in on load
+animateCounterIn(counterEl, count, 1800);
+
+// Then tick up every 8-18 seconds randomly to feel live
+function tickUp() {
+  count += Math.floor(Math.random() * 3) + 1;
+  counterEl.textContent = count.toLocaleString();
+  setTimeout(tickUp, 8000 + Math.random() * 10000);
+}
+setTimeout(tickUp, 3000);
 
 // NAV SCROLL
 window.addEventListener('scroll', () => {
