@@ -148,28 +148,7 @@ nav {
 }
 .nav-links a:hover { color: var(--text); }
 
-/* HAMBURGER */
-.menu-btn {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-  padding: 4px;
-  background: none;
-  border: none;
-  z-index: 200;
-}
-.menu-btn span {
-  display: block;
-  width: 22px;
-  height: 1.5px;
-  background: var(--text-muted);
-  transition: all 0.3s ease;
-  transform-origin: center;
-}
-.menu-btn.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: var(--text); }
-.menu-btn.open span:nth-child(2) { opacity: 0; }
-.menu-btn.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: var(--text); }
+/* placeholder */
 
 /* MOBILE DRAWER */
 .mobile-drawer {
@@ -1047,7 +1026,8 @@ footer {
   nav { padding: 16px 20px; }
   .nav-links { display: none; }
   .nav-desktop-btns { display: none; }
-  .menu-btn { display: flex; }
+  .menu-btn { display: none; }
+  .nav-cta { font-size: 11px; padding: 8px 16px; }
 
   /* HERO */
   .hero { padding: 100px 20px 60px; min-height: auto; }
@@ -1150,19 +1130,8 @@ footer {
       <li><a href="#pricing">Pricing</a></li>
       <li><a href="#industries">Industries</a></li>
     </ul>
-    <div class="nav-desktop-btns" style="display:flex;gap:12px;align-items:center;">
-      <a href="#cta" class="btn-primary">Start Now</a>
-    </div>
-    <button class="menu-btn" id="menuBtn" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+    <a href="#cta" class="btn-primary nav-cta">Start Now</a>
   </nav>
-
-  <!-- MOBILE DRAWER -->
-
-  <div class="mobile-drawer" id="mobileDrawer">
-    <a href="#cta" class="drawer-link" style="color:var(--accent);">Start Now →</a>
-  </div>
 
   <!-- HERO -->
 
@@ -1697,20 +1666,6 @@ footer {
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 
 ```
-// HAMBURGER MENU
-const menuBtn = document.getElementById('menuBtn');
-const mobileDrawer = document.getElementById('mobileDrawer');
-menuBtn.addEventListener('click', () => {
-  menuBtn.classList.toggle('open');
-  mobileDrawer.classList.toggle('open');
-});
-document.querySelectorAll('.drawer-link').forEach(link => {
-  link.addEventListener('click', () => {
-    menuBtn.classList.remove('open');
-    mobileDrawer.classList.remove('open');
-  });
-});
-
 // CURSOR
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
